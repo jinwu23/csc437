@@ -1,0 +1,14 @@
+:root {
+    --color-background-page: #e4edde;
+    --color-background-page-secondary: #d4e2ca;
+    --color-accent: #AAB99A;
+    --color-border-image: var(--color-accent);
+    --color-background-navbar: var(--color-accent);
+    --color-text-primary-dark: #212b21;
+    --color-text-primary: #263126;
+    --color-text-secondary: #38403b;
+    --font-family-primary: "Raleway";
+    --font-family-secondary: "Rubik";
+    --font-family-generic: sans-serif;
+    --heading1-font-size: 2rem;
+}
