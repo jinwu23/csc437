@@ -24,32 +24,6 @@ img {
     border-radius: 0.188rem;
 }
 
-#navbar {
-    display: flex;
-    align-items: baseline;
-    margin: 0rem;
-    padding-left: 1rem;
-    background-color: var(--color-background-navbar);
-}
-
-#navbar a{
-    text-decoration: none;
-}
-
-#navbar .active{
-    text-decoration: underline;
-}
-
-#header_text {
-    font-size: var(--heading1-font-size);
-    color: var(--color-text-primary-dark);
-    margin-right: 2rem;
-}
-
-.nav_link {
-    margin-right: 0.625rem;
-}
-
 #page_content {
     margin-top: 1rem;
     margin-left: 1rem;

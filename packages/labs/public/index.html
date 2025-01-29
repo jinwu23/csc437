@@ -1,49 +1,63 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <!-- Links for css -->
-        <link rel="stylesheet" type="text/css" href="styles.css">
-        <link rel="stylesheet" type="text/css" href="tokens.css">
-        <!-- Links for css end -->
+  <head>
+    <!-- Links for css -->
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link rel="stylesheet" type="text/css" href="tokens.css" />
+    <!-- Links for css end -->
 
-        <!-- Links for fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-        <!-- Links for fonts end -->
+    <!-- Links for fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Links for fonts end -->
 
-        <!-- Links for JS -->
-        <script type="module" src="navbar.mjs"></script> 
-        <!-- Links for JS end -->
-    </head>
-    <body>
-        <nav id="navbar"></nav>
-        <main id="page_content">
-            <div id="info_div">
-                <img id="self_img" src="./images/jin.jpg" alt="Jin holding fruit"/>
-                <h2>Contact Information</h2>
-                <dl>
-                    <div class="contact_info_div">
-                        <dt><b>Email</b></dt>
-                        <dd>jinwu2003@gmail.com</dd>
-                        <dt><b>Github</b></dt>
-                        <dd><a target="blank" href="https://github.com/jinwu23">jinwu23</a></dd>    
-                        <dt><b>LinkedIn</b></dt>
-                        <dd><a target="blank" href="https://www.linkedin.com/in/jin-wu-a8a621201/">Jin Wu</a></dd>    
-                    </div>
-                </dl>
-            </div>
-            <div id="about_me_div">
-                <h2>About Me</h2>
-                <p>I am a senior at Cal Poly SLO studying computer science.</p>
-                <h2>Fun Facts</h2>
-                <ul>
-                    <li>I like to cook</li>
-                    <li>I can breakdance</li>
-                    <li>I skateboard</li>
-                </ul>
-            </div>
-        </main>     
-    </body>
+    <!-- Links for JS -->
+    <script type="module" src="navigation-bar.mjs"></script>
+    <!-- Links for JS end -->
+  </head>
+  <body>
+    <navigation-bar></navigation-bar>
+    <main id="page_content">
+      <div id="info_div">
+        <img id="self_img" src="./images/jin.jpg" alt="Jin holding fruit" />
+        <h2>Contact Information</h2>
+        <dl>
+          <div class="contact_info_div">
+            <dt><b>Email</b></dt>
+            <dd>jinwu2003@gmail.com</dd>
+            <dt><b>Github</b></dt>
+            <dd>
+              <a target="blank" href="https://github.com/jinwu23">jinwu23</a>
+            </dd>
+            <dt><b>LinkedIn</b></dt>
+            <dd>
+              <a
+                target="blank"
+                href="https://www.linkedin.com/in/jin-wu-a8a621201/"
+                >Jin Wu</a
+              >
+            </dd>
+          </div>
+        </dl>
+      </div>
+      <div id="about_me_div">
+        <h2>About Me</h2>
+        <p>I am a senior at Cal Poly SLO studying computer science.</p>
+        <h2>Fun Facts</h2>
+        <ul>
+          <li>I like to cook</li>
+          <li>I can breakdance</li>
+          <li>I skateboard</li>
+        </ul>
+      </div>
+    </main>
+  </body>
 </html>
