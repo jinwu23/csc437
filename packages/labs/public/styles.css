@@ -10,7 +10,7 @@ h1, h2, dt, a{
     font-weight: 550;
 }
 
-p, dd, li { 
+p, dd, li, label { 
     color: var(--color-text-secondary);
     font-family: var(--font-family-secondary), var(--font-family-generic);
 }

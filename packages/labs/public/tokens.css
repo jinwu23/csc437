@@ -11,4 +11,17 @@
     --font-family-secondary: "Rubik";
     --font-family-generic: sans-serif;
     --heading1-font-size: 2rem;
+    --color-button-background: #e8f2ec;
+}
+
+body.dark-mode {
+    --color-background-page: #1b1221;
+    --color-background-page-secondary: #2b1d35;
+    --color-accent: #554665;
+    --color-border-image: var(--color-accent);
+    --color-background-navbar: var(--color-accent);
+    --color-text-primary-dark: #ded4de;
+    --color-text-primary: #d9ced9;
+    --color-text-secondary: #c7bfc4;
+    --color-button-background: #170d13;
 }
