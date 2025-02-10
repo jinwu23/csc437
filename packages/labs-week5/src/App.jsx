@@ -1,8 +1,9 @@
 import React from "react";
 import { nanoid } from "nanoid";
 
-import AddTaskForm from './AddTaskForm';
-import TodoItem from "./TodoItem";
+import AddTaskForm from './components/AddTaskForm';
+import TodoItem from "./components/TodoItem";
+import Modal from "./components/Modal";
 
 
 const TASK_DATA = [
@@ -32,7 +33,10 @@ function App() {
   const addTask = (name) => {
     const newTask = { id: `todo-${nanoid()}`, name, completed: false };
     setTaskList([...taskList, newTask]);
+    setModalIsOpen(false);
   }
+
+  const [modalIsOpen, setModalIsOpen] = React.useState(false);
 
   const todoItems = taskList.map((task) => (
     <TodoItem
@@ -46,14 +50,22 @@ function App() {
   ));
 
   return (
-      <main className="m-4">
-      <AddTaskForm onNewTask={addTask} />
-          <section>
-              <h1 className="text-xl font-bold my-2">To do</h1>
-              <ul className="flex flex-col gap-1">
-                  {todoItems}
-              </ul>
-          </section>
+    <main className="m-4">
+      <button className="bg-blue-300 px-6 py-3 rounded-md" onClick={() => {setModalIsOpen(true)}}>
+        Add Task
+      </button>
+      <section>
+          <h1 className="text-xl font-bold my-2">To do</h1>
+          <ul className="flex flex-col gap-1">
+              {todoItems}
+          </ul>
+      </section>
+      <Modal
+        headerLabel={"New Task"}
+        children={<AddTaskForm onNewTask={addTask} />}
+        isOpen={modalIsOpen}
+        onCloseRequested={() => { setModalIsOpen(false) }}
+      />
       </main>
   );
 }
