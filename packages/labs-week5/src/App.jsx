@@ -4,6 +4,7 @@ import { nanoid } from "nanoid";
 import AddTaskForm from './components/AddTaskForm';
 import TodoItem from "./components/TodoItem";
 import Modal from "./components/Modal";
+import { GroceryPanel } from "./components/GroceryPanel";
 
 
 const TASK_DATA = [
@@ -60,13 +61,18 @@ function App() {
               {todoItems}
           </ul>
       </section>
+      <div className="mt-4">
+        <GroceryPanel
+          onNewTask={addTask}
+        />
+      </div>
       <Modal
         headerLabel={"New Task"}
         children={<AddTaskForm onNewTask={addTask} />}
         isOpen={modalIsOpen}
         onCloseRequested={() => { setModalIsOpen(false) }}
       />
-      </main>
+    </main>
   );
 }
 
