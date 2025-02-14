@@ -32,7 +32,6 @@ export function GroceryPanel(props) {
     function handleAddTodoClicked(item) {
         const todoName = `Buy ${item.name} (${item.price.toFixed(2)})`;
         props.onNewTask(todoName);
-        setGroceryData(groceryData => groceryData.filter(grocery => grocery.name !== item.name));
     }
 
     function handleDropdownChange(changeEvent) {
