@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
+
+import { groceryFetcher } from "../utils/groceryFetcher"
 
 import { Spinner } from "./Spinner";
 
@@ -15,19 +17,37 @@ function delayMs(ms) {
 }
 
 export function GroceryPanel(props) {
-    const [groceryData, setGroceryData] = React.useState([
-        {
-            name: "test item",
-            price: 12.3
-        },
-        {
-            name: "test item 2",
-            price: 0.5
-        }
-    ]);
-
+    const [groceryData, setGroceryData] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(false);
     const [error, setError] = React.useState(null);
+    const [dropdown, setDropdown] = React.useState("MDN");
+
+    useEffect(() => {
+        setGroceryData([]);
+        let isStale = false;
+
+        const fetchData = async () => {
+            console.log("fetching data from " + dropdown);
+            setError(null);
+            setIsLoading(true);
+            try {
+                const theParsedData = await groceryFetcher.fetch(dropdown);
+                if (!isStale) {
+                    setGroceryData(theParsedData);
+                }
+            } catch (error) {
+                console.error(`Could not fetch data from ${dropdown}`)
+                setError("Could not fetch data")
+            }
+            setIsLoading(false);
+        }
+        
+        fetchData(dropdown);
+
+        return () => {
+            isStale = true;
+        }
+    }, [dropdown])
 
     function handleAddTodoClicked(item) {
         const todoName = `Buy ${item.name} (${item.price.toFixed(2)})`;
@@ -35,31 +55,10 @@ export function GroceryPanel(props) {
     }
 
     function handleDropdownChange(changeEvent) {
-        setGroceryData([]);
         setError(null);
         if (changeEvent.target.value) {
-            fetchData(changeEvent.target.value);
+            setDropdown(changeEvent.target.value);
         }
-    }
-
-    async function fetchData(url) {
-        console.log("fetching data from " + url);
-        setError(null);
-        setIsLoading(true);
-        await delayMs(2000);
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`HTTP error: ${response.status}`);
-            }
-            const theParsedData = await response.json();
-            setGroceryData(theParsedData);
-
-        } catch (error) {
-            console.error(`Could not fetch data from ${url}`)
-            setError("Could not fetch data")
-        }
-        setIsLoading(false);
     }
 
     return (
@@ -71,10 +70,12 @@ export function GroceryPanel(props) {
                     className="border border-gray-300 p-1 rounded-sm disabled:opacity-50"
                     disabled={isLoading}
                     onChange={handleDropdownChange}
+                    value={dropdown}
                 >
-                    <option value="">(None selected)</option>
-                    <option value={MDN_URL}>MDN</option>
-                    <option value="invalid">Who knows?</option>
+                    <option value="MDN">MDN</option>
+                    <option value="Liquor store">Liquor store</option>
+                    <option value="Butcher">Butcher</option>
+                    <option value="whoknows">Who knows?</option>
                 </select>
                 {isLoading && <Spinner />}
                 <p className="text-red-600"> {error} </p>
