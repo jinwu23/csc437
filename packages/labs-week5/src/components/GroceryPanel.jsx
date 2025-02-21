@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 
 import { groceryFetcher } from "../utils/groceryFetcher"
+import { useGroceryFetch } from "../utils/useGroceryFetch";
 
 import { Spinner } from "./Spinner";
 
@@ -17,37 +18,8 @@ function delayMs(ms) {
 }
 
 export function GroceryPanel(props) {
-    const [groceryData, setGroceryData] = React.useState([]);
-    const [isLoading, setIsLoading] = React.useState(false);
-    const [error, setError] = React.useState(null);
     const [dropdown, setDropdown] = React.useState("MDN");
-
-    useEffect(() => {
-        setGroceryData([]);
-        let isStale = false;
-
-        const fetchData = async () => {
-            console.log("fetching data from " + dropdown);
-            setError(null);
-            setIsLoading(true);
-            try {
-                const theParsedData = await groceryFetcher.fetch(dropdown);
-                if (!isStale) {
-                    setGroceryData(theParsedData);
-                }
-            } catch (error) {
-                console.error(`Could not fetch data from ${dropdown}`)
-                setError("Could not fetch data")
-            }
-            setIsLoading(false);
-        }
-        
-        fetchData(dropdown);
-
-        return () => {
-            isStale = true;
-        }
-    }, [dropdown])
+    const { groceryData, isLoading, error } = useGroceryFetch(dropdown);
 
     function handleAddTodoClicked(item) {
         const todoName = `Buy ${item.name} (${item.price.toFixed(2)})`;
@@ -55,7 +27,6 @@ export function GroceryPanel(props) {
     }
 
     function handleDropdownChange(changeEvent) {
-        setError(null);
         if (changeEvent.target.value) {
             setDropdown(changeEvent.target.value);
         }
