@@ -81,34 +81,40 @@ function Events() {
   return (
     <>
       <div className="bg-primary">
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center lg:flex-row">
           {/* Events List */}
-          <h1 className="mt-8 mb-4 text-3xl text-dark-text font-semibold">
-            Upcoming Events
-          </h1>
-          {/* Loading State */}
-          {loading && <p>Events Loading...</p>}
+          <div className="lg:ml-8">
+            <h1 className="mt-8 mb-4 text-3xl text-dark-text font-semibold">
+              Upcoming Events
+            </h1>
+            {/* Loading State */}
+            {loading && <p>Events Loading...</p>}
 
-          <div className="flex flex-col gap-4">
-            {userEvents.map((event) => (
-              <Event
-                key={event.id}
-                event={event}
-                setSelectedEvent={setSelectedEvent}
-                eventFunction={"cancel"}
-                setEventFunction={setEventFunction}
-              />
-            ))}
+            <div className="flex flex-col gap-4">
+              {userEvents.map((event) => (
+                <Event
+                  key={event.id}
+                  event={event}
+                  setSelectedEvent={setSelectedEvent}
+                  eventFunction={"cancel"}
+                  setEventFunction={setEventFunction}
+                />
+              ))}
+            </div>
           </div>
           {/* Events Calender */}
-          <h1 className="mt-8 mb-4 text-3xl text-dark-text font-semibold">
-            Sign Up for Events
-          </h1>
-          <Calendar
-            events={upcomingEvents}
-            setSelectedEvent={setSelectedEvent}
-            setEventFunction={setEventFunction}
-          />
+          <div className="lg:mb-8 ">
+            <h1 className="mt-8 mb-4 text-3xl text-dark-text font-semibold text-center">
+              Sign Up for Events
+            </h1>
+            <div className="w-full overflow-y-auto">
+              <Calendar
+                events={upcomingEvents}
+                setSelectedEvent={setSelectedEvent}
+                setEventFunction={setEventFunction}
+              />
+            </div>
+          </div>
           <div className="mb-16" />
         </div>
       </div>
