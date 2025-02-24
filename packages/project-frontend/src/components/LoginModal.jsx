@@ -40,6 +40,19 @@ function LoginModal() {
                             required 
                         />
                     </div>
+                    {/* Create Account Section */}
+                    <div className="text-center mt-4">
+                        <p>
+                            Don't have an account? 
+                            <button 
+                                type="button" 
+                                className=" underline ml-1"
+                                onClick={() => navigate("/create-account")}
+                            >
+                                Create Account
+                            </button>
+                        </p>
+                    </div>
                     {/* Login */}
                     <button 
                         type="button" 
@@ -55,3 +68,4 @@ function LoginModal() {
 }
 
 export default LoginModal;
+
