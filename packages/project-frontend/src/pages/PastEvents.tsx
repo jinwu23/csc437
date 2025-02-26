@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 
 import Event from "../components/Event";
 import EventModal from "../components/EventModal";
+import { EventType } from "../types";
 
 const past_events = [
   {
@@ -39,9 +40,9 @@ const past_events = [
 ];
 
 function PastEvents() {
-  const [pastEvents, setPastEvents] = useState([]);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [pastEvents, setPastEvents] = useState<Array<EventType>>([]);
+  const [selectedEvent, setSelectedEvent] = useState<EventType | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     // Simulate a random loading time (between 2 to 3 seconds)
@@ -68,6 +69,8 @@ function PastEvents() {
                 key={event.id}
                 event={event}
                 setSelectedEvent={setSelectedEvent}
+                eventFunction="none"
+                setEventFunction={() => { }}
               />
             ))}
           </div>
@@ -77,7 +80,10 @@ function PastEvents() {
         <EventModal
           event={selectedEvent}
           setSelectedEvent={setSelectedEvent}
-          registering={false}
+          eventFunction="none"
+          setEventFunction={() => { }}
+          userEvents={pastEvents}
+          setUserEvents={() => { }}
         />
       )}
     </>

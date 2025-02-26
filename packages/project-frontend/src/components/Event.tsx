@@ -1,4 +1,13 @@
-function Event({ event, setSelectedEvent, eventFunction, setEventFunction }) {
+import { EventType, EventFunctionType } from "../types";
+
+type EventProps = {
+  event: EventType;
+  setSelectedEvent: (event: EventType) => void;
+  eventFunction: EventFunctionType;
+  setEventFunction: (func: EventFunctionType) => void;
+}
+
+function Event({ event, setSelectedEvent, eventFunction, setEventFunction }: EventProps) {
   const handleEventClick = () => {
     setEventFunction(eventFunction);
     setSelectedEvent(event);

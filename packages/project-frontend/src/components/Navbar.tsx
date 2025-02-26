@@ -2,7 +2,12 @@ import { Link } from "react-router-dom";
 import { CiCalendar } from "react-icons/ci";
 import { CgProfile } from "react-icons/cg";
 
-function Navbar({ darkMode, setDarkMode }) {
+type NavbarProps = {
+  darkMode: boolean;
+  setDarkMode: (value: boolean) => void;
+}
+
+function Navbar({ darkMode, setDarkMode }: NavbarProps) {
   return (
     <div className="flex justify-between h-16 bg-background-dark dark:bg-gray-900 items-center px-4">
       <Link to="/login">

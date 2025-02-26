@@ -8,7 +8,7 @@ function MainLayout() {
   const hideNavbarPaths = ["/login", "/create-account"];
 
   // Dark mode state
-  const [darkMode, setDarkMode] = useState(
+  const [darkMode, setDarkMode] = useState<boolean>(
     localStorage.getItem("darkMode") === "true"
   );
 
@@ -19,7 +19,7 @@ function MainLayout() {
     } else {
       document.documentElement.classList.remove("dark");
     }
-    localStorage.setItem("darkMode", darkMode);
+    localStorage.setItem("darkMode", darkMode.toString());
   }, [darkMode]);
 
   return (

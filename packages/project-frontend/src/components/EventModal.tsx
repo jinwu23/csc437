@@ -1,3 +1,14 @@
+import { EventType, EventFunctionType } from "../types";
+
+type EventModalProps = {
+  event: EventType;
+  setSelectedEvent: (event: EventType | null) => void;
+  eventFunction: EventFunctionType;
+  setEventFunction: (func: EventFunctionType) => void;
+  userEvents: Array<EventType>;
+  setUserEvents: (events: Array<EventType>) => void;
+};
+
 function EventModal({
   event,
   setSelectedEvent,
@@ -5,15 +16,15 @@ function EventModal({
   setEventFunction,
   userEvents,
   setUserEvents,
-}) {
-  const handleClose = (e) => {
+}: EventModalProps) {
+  const handleClose = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       setSelectedEvent(null);
     }
-    setEventFunction("");
+    setEventFunction("none");
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = (e: React.MouseEvent) => {
     // Check if the event is already registered to avoid duplicates
     if (!userEvents.some((userEvent) => userEvent.id === event.id)) {
       setUserEvents([...userEvents, event]);
@@ -24,7 +35,7 @@ function EventModal({
     handleClose(e);
   };
 
-  const handleCancel = (e) => {
+  const handleCancel = (e: React.MouseEvent) => {
     setUserEvents(userEvents.filter((userEvent) => userEvent.id !== event.id));
     console.log(`Canceled registration for ${event.title}`);
     handleClose(e);

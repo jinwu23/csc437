@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router";
-import './index.css'
+import "./index.css"
 
 import MainLayout from "./MainLayout";
 import Events from "./pages/Events";
@@ -11,6 +11,10 @@ import CreateAccount from "./pages/CreateAccount";
 import PastEvents from "./pages/PastEvents";
 
 const root = document.getElementById("root");
+
+if (!root) {
+  throw new Error("Root element not found");
+}
 
 ReactDOM.createRoot(root).render(
   <BrowserRouter>

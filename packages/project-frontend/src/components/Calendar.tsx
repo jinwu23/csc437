@@ -1,12 +1,20 @@
+import { EventFunctionType, EventType } from "../types";
+
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import dayGridPlugin from "@fullcalendar/daygrid";
+
+type CalendarProps = {
+  events: EventType[];
+  setSelectedEvent: (event: EventType | null) => void;
+  setEventFunction: (func: EventFunctionType) => void;
+}
 
 export default function Calendar({
   events,
   setSelectedEvent,
   setEventFunction,
-}) {
+}: CalendarProps) {
   const formattedEvents = events.map((event) => ({
     title: event.title,
     start: event.date,
@@ -18,7 +26,7 @@ export default function Calendar({
     },
   }));
 
-  const renderEventContent = (eventInfo) => {
+  const renderEventContent = (eventInfo: any) => {
     return (
       <div className="p-1">
         <p className="font-semibold overflow-hidden">{eventInfo.event.title}</p>
@@ -31,12 +39,12 @@ export default function Calendar({
     );
   };
 
-  const handleEventClick = (clickInfo) => {
+  const handleEventClick = (clickInfo: any) => {
     const originalEvent = events.find(
       (event) => event.id === clickInfo.event.extendedProps.originalId
     );
     setEventFunction("register");
-    setSelectedEvent(originalEvent);
+    setSelectedEvent(originalEvent || null);
   };
 
   return (

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 
+import { EventFunctionType, EventType } from "../types";
+
 import Event from "../components/Event";
 import Calendar from "../components/Calendar";
 import EventModal from "../components/EventModal";
@@ -60,13 +62,13 @@ const user_events = [
 ];
 
 function Events() {
-  const [userEvents, setUserEvents] = useState([]);
-  const [upcomingEvents, setUpcomingEvents] = useState([]);
-  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [userEvents, setUserEvents] = useState<Array<EventType>>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<Array<EventType>>([]);
+  const [selectedEvent, setSelectedEvent] = useState<EventType | null>(null);
   // event function either none, register, cancel
-  const [eventFunction, setEventFunction] = useState("");
+  const [eventFunction, setEventFunction] = useState <EventFunctionType>("none");
   // Loading state
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     // Simulate a random loading time (between 2 to 3 seconds)

@@ -1,18 +1,27 @@
-
 import { useState } from "react";
 import { Link } from "react-router";
+
+import { UserType } from "../types";
+
 import { Eye, EyeOff, Edit2 } from "lucide-react";
 
-function Profile({ onNavigateToPastEvents }) {
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [isEditing, setIsEditing] = useState({
+type EditingStateType = {
+  firstName: boolean;
+  lastName: boolean;
+  email: boolean;
+  password: boolean;
+};
+
+function Profile() {
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<EditingStateType>({
     firstName: false,
     lastName: false,
     email: false,
     password: false
   });
 
-  const [userData, setUserData] = useState({
+  const [userData, setUserData] = useState<UserType>({
     firstName: "John",
     lastName: "Doe",
     email: "john.doe@example.com",
@@ -21,14 +30,14 @@ function Profile({ onNavigateToPastEvents }) {
     totalEvents: 8
   });
 
-  const handleEdit = (field, value) => {
+  const handleEdit = (field: keyof UserType, value: string) => {
     setUserData(prev => ({
       ...prev,
       [field]: value
     }));
   };
 
-  const toggleEdit = (field) => {
+  const toggleEdit = (field: keyof EditingStateType) => {
     setIsEditing(prev => ({
       ...prev,
       [field]: !prev[field]
