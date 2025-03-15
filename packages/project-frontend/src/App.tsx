@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import "./index.css";
 
-import { JwtPayload, jwtDecode } from "jwt-decode";
-
 import MainLayout from "./MainLayout";
 import Events from "./pages/Events";
 import Profile from "./pages/Profile";
@@ -12,24 +10,11 @@ import CreateAccount from "./pages/auth/CreateAccount";
 import PastEvents from "./pages/PastEvents";
 import { ProtectedRoute } from "./ProtectedRoute";
 
-interface CustomJwtPayload extends JwtPayload {
-  username: string;
-}
+import { UserData } from "./types/types";
 
 function App() {
-  const [accountName, setAccountName] = useState<string | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (authToken) {
-      try {
-        const decoded = jwtDecode<CustomJwtPayload>(authToken);
-        setAccountName(decoded.username);
-      } catch (error) {
-        console.error("Failed to decode token:", error);
-      }
-    }
-  }, [authToken]);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   return (
     <Routes>
@@ -37,7 +22,11 @@ function App() {
         <Route
           path="/"
           element={
-            <ProtectedRoute authToken={authToken}>
+            <ProtectedRoute
+              authToken={authToken}
+              userData={userData}
+              requireAdmin={false}
+            >
               <Events />
             </ProtectedRoute>
           }
@@ -45,7 +34,11 @@ function App() {
         <Route
           path="/events"
           element={
-            <ProtectedRoute authToken={authToken}>
+            <ProtectedRoute
+              authToken={authToken}
+              userData={userData}
+              requireAdmin={false}
+            >
               <Events />
             </ProtectedRoute>
           }
@@ -53,20 +46,45 @@ function App() {
         <Route
           path="/profile"
           element={
-            <ProtectedRoute authToken={authToken}>
-              <Profile />
+            <ProtectedRoute
+              authToken={authToken}
+              userData={userData}
+              requireAdmin={false}
+            >
+              <Profile userData={userData} setUserData={setUserData} />
             </ProtectedRoute>
           }
         />
         <Route
           path="/past-events"
           element={
-            <ProtectedRoute authToken={authToken}>
+            <ProtectedRoute
+              authToken={authToken}
+              userData={userData}
+              requireAdmin={false}
+            >
               <PastEvents />
             </ProtectedRoute>
           }
         />
-        <Route path="/login" element={<Login setAuthToken={setAuthToken} />} />
+        <Route
+          path="/create-event"
+          element={
+            <ProtectedRoute
+              authToken={authToken}
+              userData={userData}
+              requireAdmin={true}
+            >
+              <PastEvents />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <Login setAuthToken={setAuthToken} setUserData={setUserData} />
+          }
+        />
         <Route path="/create-account" element={<CreateAccount />} />
       </Route>
     </Routes>

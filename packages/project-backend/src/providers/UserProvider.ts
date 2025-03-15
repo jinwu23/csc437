@@ -1,97 +1,69 @@
-import { MongoClient, ObjectId } from "mongodb";
+import { Collection, MongoClient, ObjectId } from "mongodb";
 
-interface Image {
-  _id: ObjectId;
-  src: string;
-  name: string;
-  author: ObjectId | Author;
-  likes: number;
+export interface IUserDocument {
+  _id?: ObjectId;
+  type: string;
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  totalEvents: number;
+  totalHours: number;
+  eventsAttended: Array<ObjectId>;
+  eventsAttending: Array<ObjectId>;
 }
 
-interface Author {
-  _id: ObjectId;
-  username: string;
+export interface IUserData {
+  id: string;
+  type: string;
   email: string;
+  firstName: string;
+  lastName: string;
+  totalEvents: number;
+  totalHours: number;
+  eventsAttended: Array<string>;
+  eventsAttending: Array<string>;
 }
 
 export class UserProvider {
-  constructor(private readonly mongoClient: MongoClient) {}
+  private readonly collection: Collection<IUserDocument>;
 
-  async getAllImages(authorId?: string): Promise<Image[]> {
-    const collectionName = process.env.IMAGES_COLLECTION_NAME;
-    const authorsCollectionName = process.env.USERS_COLLECTION_NAME;
-    if (!collectionName || !authorsCollectionName) {
-      throw new Error(
-        "Missing IMAGES_COLLECTION_NAME from environment variables"
-      );
+  constructor(mongoClient: MongoClient) {
+    const COLLECTION_NAME = process.env.USERS_COLLECTION_NAME;
+    if (!COLLECTION_NAME) {
+      throw new Error("Missing USERS_COLLECTION_NAME from env file");
     }
-
-    const collection = this.mongoClient.db().collection<Image>(collectionName);
-
-    // Create the pipeline
-    const pipeline: any[] = [];
-
-    // Add author filter stage if authorId is provided
-    if (authorId) {
-      pipeline.push({
-        $match: {
-          author: authorId, // Filter by author ID
-        },
-      });
-    }
-
-    // Add the rest of the aggregation stages
-    pipeline.push(
-      {
-        $lookup: {
-          from: authorsCollectionName,
-          localField: "author",
-          foreignField: "_id",
-          as: "authorDetails",
-        },
-      },
-      {
-        $unwind: "$authorDetails", // Convert authorDetails array to a single object
-      },
-      {
-        $project: {
-          _id: 1,
-          src: 1,
-          name: 1,
-          author: "$authorDetails", // Replace author ID with full author object
-          likes: 1,
-        },
-      }
-    );
-
-    return collection.aggregate<Image>(pipeline).toArray();
+    this.collection = mongoClient
+      .db()
+      .collection<IUserDocument>(COLLECTION_NAME);
   }
 
-  async updateImageName(imageId: string, newName: string): Promise<number> {
-    const collectionName = process.env.IMAGES_COLLECTION_NAME;
-    if (!collectionName) {
-      throw new Error(
-        "Missing IMAGES_COLLECTION_NAME from environment variables"
+  async getUserByEmail(email: string): Promise<IUserData | null> {
+    try {
+      const user = await this.collection.findOne(
+        { email },
+        { projection: { password: 0 } } // Exclude password
       );
+
+      if (!user) {
+        return null;
+      }
+
+      // Transform to IUserData format
+      return {
+        id: user._id?.toString() || "",
+        type: user.type,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        totalEvents: user.totalEvents,
+        totalHours: user.totalHours,
+        eventsAttended: user.eventsAttended.map((id) => id.toString()),
+        eventsAttending: user.eventsAttending.map((id) => id.toString()),
+      };
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      throw new Error("Failed to retrieve user data");
     }
-
-    const collection = this.mongoClient.db().collection<Image>(collectionName);
-
-    // Create query to validate imageId as ObjectId or not
-    let query: any;
-    if (ObjectId.isValid(imageId)) {
-      query = { _id: new ObjectId(imageId) }; // Convert to ObjectId if valid
-    } else {
-      query = { _id: imageId }; // Keep as string if it's not an ObjectId
-    }
-
-    // Use updateOne to modify the image name
-    const result = await collection.updateOne(
-      query, // Filter by image ID
-      { $set: { name: newName } } // Set the new name
-    );
-
-    // Return the number of documents that matched the filter criteria
-    return result.matchedCount;
   }
 }

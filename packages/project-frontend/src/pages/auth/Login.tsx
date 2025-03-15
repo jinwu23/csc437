@@ -1,4 +1,5 @@
 import LoginModal from "../../components/LoginModal";
+import { UserData } from "../../types/types";
 import { sendPostRequest } from "../../utils/sendPostRequest";
 import { useNavigate } from "react-router";
 
@@ -9,13 +10,15 @@ type LoginCredentials = {
 
 type LoginProps = {
   setAuthToken: React.Dispatch<React.SetStateAction<string | null>>;
+  setUserData: React.Dispatch<React.SetStateAction<UserData | null>>;
 };
 
-function Login({ setAuthToken }: LoginProps) {
+function Login({ setAuthToken, setUserData }: LoginProps) {
   const navigate = useNavigate();
 
   async function handleLogin({ email, password }: LoginCredentials) {
     let token = null;
+    let userData = null;
 
     try {
       console.log("Logging in user:", email);
@@ -24,12 +27,16 @@ function Login({ setAuthToken }: LoginProps) {
         password,
       });
 
-      if (response.data.data) {
-        token = response.data.data.token;
+      console.log(response);
+
+      if (response.data.token && response.data.user) {
+        token = response.data.token;
+        userData = response.data.user;
       }
 
-      if (response.type === "success" && token) {
+      if (response.type === "success" && token && userData) {
         setAuthToken(token);
+        setUserData(userData);
         navigate("/");
         return;
       } else {
@@ -40,6 +47,7 @@ function Login({ setAuthToken }: LoginProps) {
       throw error;
     }
   }
+
   return (
     <>
       <div className="flex flex-col items-center justify-center min-h-screen px-12 bg-primary">

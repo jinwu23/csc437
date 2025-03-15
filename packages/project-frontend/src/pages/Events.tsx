@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { EventFunctionType, EventType } from "../types";
+import { EventFunctionType, EventData } from "../types/types";
 
 import Event from "../components/Event";
 import Calendar from "../components/Calendar";
@@ -62,48 +62,43 @@ const user_events = [
 ];
 
 function Events() {
-  const [userEvents, setUserEvents] = useState<Array<EventType>>([]);
-  const [upcomingEvents, setUpcomingEvents] = useState<Array<EventType>>([]);
-  const [selectedEvent, setSelectedEvent] = useState<EventType | null>(null);
+  const [userEvents, setUserEvents] = useState<Array<EventData>>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<Array<EventData>>([]);
+  const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null);
   // event function either none, register, cancel
   const [eventFunction, setEventFunction] = useState<EventFunctionType>("none");
   // Loading state
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    // Simulate a random loading time (between 2 to 3 seconds)
-    const loadTime = Math.random() * 1000 + 2000;
-    setTimeout(() => {
-      setUserEvents(user_events);
-      setUpcomingEvents(upcoming_events);
-      setLoading(false);
-    }, loadTime);
-  }, []);
-
   return (
     <>
       <div className="bg-primary min-h-screen">
         <div className="flex flex-col items-center lg:flex-row">
-          {/* Events List */}
-          <div className="lg:ml-8">
-            <h1 className="mt-8 mb-4 text-3xl text-dark-text font-semibold">
-              Upcoming Events
-            </h1>
-            {/* Loading State */}
-            {loading && <p className="text-dark-text">Events Loading...</p>}
+          <div className="flex flex-col items-center">
+            {/* Admin Only Event Creation */}
+            {}
+            {/* Events List */}
+            <div className="lg:ml-8">
+              <h1 className="mt-8 mb-4 text-3xl text-dark-text font-semibold">
+                Upcoming Events
+              </h1>
+              {/* Loading State */}
+              {loading && <p className="text-dark-text">Events Loading...</p>}
 
-            <div className="flex flex-col gap-4">
-              {userEvents.map((event) => (
-                <Event
-                  key={event.id}
-                  event={event}
-                  setSelectedEvent={setSelectedEvent}
-                  eventFunction={"cancel"}
-                  setEventFunction={setEventFunction}
-                />
-              ))}
+              <div className="flex flex-col gap-4">
+                {userEvents.map((event) => (
+                  <Event
+                    key={event.id.toString()}
+                    event={event}
+                    setSelectedEvent={setSelectedEvent}
+                    eventFunction={"cancel"}
+                    setEventFunction={setEventFunction}
+                  />
+                ))}
+              </div>
             </div>
           </div>
+
           {/* Events Calender */}
           <div className="lg:mb-8 ">
             <h1 className="mt-8 mb-4 text-3xl text-dark-text font-semibold text-center">

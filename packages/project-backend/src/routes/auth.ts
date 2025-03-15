@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 import { MongoClient } from "mongodb";
 import { CredentialsProvider } from "../providers/CredentialsProvider";
 import jwt from "jsonwebtoken";
+import { UserProvider } from "../providers/UserProvider";
 
 // Middleware to verify JWT token
 export function verifyAuthToken(
@@ -67,6 +68,7 @@ export function registerAuthRoutes(
   mongoClient: MongoClient
 ) {
   const credentialsProvider = new CredentialsProvider(mongoClient);
+  const userProvider = new UserProvider(mongoClient);
 
   // Register a new user
   app.post("/auth/register", async (req: Request, res: Response) => {
@@ -136,12 +138,23 @@ export function registerAuthRoutes(
         return;
       }
 
+      // Fetch user data from MongoDB
+      const userData = await userProvider.getUserByEmail(email);
+      if (!userData) {
+        res.status(500).json({
+          type: "error",
+          message: "User authenticated but data retrieval failed",
+        });
+        return;
+      }
+
       // Generate and return a JWT token
       const token = await generateAuthToken(email);
       res.status(200).json({
         type: "success",
         message: "Login successful",
-        data: { token },
+        token,
+        user: userData,
       });
     } catch (error) {
       console.error("Login error:", error);

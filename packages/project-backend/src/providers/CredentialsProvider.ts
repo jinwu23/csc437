@@ -1,20 +1,25 @@
-import { Collection, MongoClient } from "mongodb";
+import { Collection, MongoClient, ObjectId } from "mongodb";
 import bcrypt from "bcryptjs";
 
 interface IUserDocument {
+  type: string;
   email: string;
   password: string;
   firstName: string;
   lastName: string;
+  totalEvents: number;
+  totalHours: number;
+  eventsAttended: Array<ObjectId>;
+  eventsAttending: Array<ObjectId>;
 }
 
 export class CredentialsProvider {
   private readonly collection: Collection<IUserDocument>;
 
   constructor(mongoClient: MongoClient) {
-    const COLLECTION_NAME = process.env.CREDS_COLLECTION_NAME;
+    const COLLECTION_NAME = process.env.USERS_COLLECTION_NAME;
     if (!COLLECTION_NAME) {
-      throw new Error("Missing CREDS_COLLECTION_NAME from env file");
+      throw new Error("Missing USERS_COLLECTION_NAME from env file");
     }
     this.collection = mongoClient
       .db()
@@ -41,10 +46,15 @@ export class CredentialsProvider {
 
       // Store the new user credentials and additional details
       await this.collection.insertOne({
+        type: "user",
         email,
         password: hashedPassword,
         firstName,
         lastName,
+        totalEvents: 0,
+        totalHours: 0,
+        eventsAttended: [],
+        eventsAttending: [],
       });
 
       return true; // Successfully registered

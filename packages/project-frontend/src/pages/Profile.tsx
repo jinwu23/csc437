@@ -1,48 +1,48 @@
-import { useState } from "react";
 import { Link } from "react-router";
+import { UserData } from "../types/types";
+import UserInformationModal from "../components/UserInformationModal";
+import { sendPostRequest } from "../utils/sendPostRequest";
 
-import { UserType } from "../types";
-
-import { Eye, EyeOff, Edit2 } from "lucide-react";
-
-type EditingStateType = {
-  firstName: boolean;
-  lastName: boolean;
-  email: boolean;
-  password: boolean;
+type ProfileProps = {
+  userData: UserData | null;
+  setUserData: React.Dispatch<React.SetStateAction<UserData | null>>;
 };
 
-function Profile() {
-  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
-  const [isEditing, setIsEditing] = useState<EditingStateType>({
-    firstName: false,
-    lastName: false,
-    email: false,
-    password: false,
-  });
+type EditCredentials = {
+  firstName: string;
+  lastName: string;
+  email: string;
+};
 
-  const [userData, setUserData] = useState<UserType>({
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
-    password: "password",
-    totalHours: 24,
-    totalEvents: 8,
-  });
+function Profile({ userData, setUserData }: ProfileProps) {
+  const safeUserData = userData as UserData;
 
-  const handleEdit = (field: keyof UserType, value: string) => {
-    setUserData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  async function handleEdit({ email, firstName, lastName }: EditCredentials) {
+    let userData = null;
 
-  const toggleEdit = (field: keyof EditingStateType) => {
-    setIsEditing((prev) => ({
-      ...prev,
-      [field]: !prev[field],
-    }));
-  };
+    try {
+      console.log("Editing user data:", email);
+      const response = await sendPostRequest("/auth/user/edit", {
+        email,
+        firstName,
+        lastName,
+      });
+
+      if (response.data.user) {
+        userData = response.data.user;
+      }
+
+      if (response.type === "success" && userData) {
+        setUserData(userData);
+        return;
+      } else {
+        throw new Error(response.message || "Edit failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Editing error:", error);
+      throw error;
+    }
+  }
 
   return (
     <div className="bg-primary min-h-screen">
@@ -51,126 +51,7 @@ function Profile() {
           Profile
         </h1>
 
-        {/* User Information */}
-        <div className="bg-secondary p-8 rounded-lg shadow-lg w-full max-w-md mb-8">
-          <h2 className="text-2xl font-semibold text-center mb-6 text-dark-text">
-            User Information
-          </h2>
-
-          {/* First Name */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-dark-text mb-1">
-              First Name
-            </label>
-            <div className="flex items-center">
-              {isEditing.firstName ? (
-                <input
-                  type="text"
-                  value={userData.firstName}
-                  onChange={(e) => handleEdit("firstName", e.target.value)}
-                  className="p-2 flex-1 border rounded-md mr-2 text-dark-text"
-                />
-              ) : (
-                <span className="p-2 flex-1 text-dark-text">
-                  {userData.firstName}
-                </span>
-              )}
-              <button
-                onClick={() => toggleEdit("firstName")}
-                className="p-2 text-dark-text"
-              >
-                <Edit2 size={18} />
-              </button>
-            </div>
-          </div>
-
-          {/* Last Name */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-dark-text mb-1">
-              Last Name
-            </label>
-            <div className="flex items-center">
-              {isEditing.lastName ? (
-                <input
-                  type="text"
-                  value={userData.lastName}
-                  onChange={(e) => handleEdit("lastName", e.target.value)}
-                  className="p-2 flex-1 border rounded-md mr-2 text-dark-text"
-                />
-              ) : (
-                <span className="p-2 flex-1 text-dark-text">
-                  {userData.lastName}
-                </span>
-              )}
-              <button
-                onClick={() => toggleEdit("lastName")}
-                className="p-2 text-dark-text"
-              >
-                <Edit2 size={18} />
-              </button>
-            </div>
-          </div>
-
-          {/* Email */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-dark-text mb-1">
-              Email
-            </label>
-            <div className="flex items-center">
-              {isEditing.email ? (
-                <input
-                  type="email"
-                  value={userData.email}
-                  onChange={(e) => handleEdit("email", e.target.value)}
-                  className="p-2 flex-1 border rounded-md mr-2 text-dark-text"
-                />
-              ) : (
-                <span className="p-2 flex-1 text-dark-text">
-                  {userData.email}
-                </span>
-              )}
-              <button
-                onClick={() => toggleEdit("email")}
-                className="p-2 text-dark-text"
-              >
-                <Edit2 size={18} />
-              </button>
-            </div>
-          </div>
-
-          {/* Password */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-dark-text mb-1">
-              Password
-            </label>
-            <div className="flex items-center">
-              {isEditing.password ? (
-                <input
-                  type={passwordVisible ? "text" : "password"}
-                  value={userData.password}
-                  onChange={(e) => handleEdit("password", e.target.value)}
-                  className="p-2 flex-1 border rounded-md mr-2 text-dark-text"
-                />
-              ) : (
-                <span className="p-2 flex-1 text-dark-text">
-                  {passwordVisible ? userData.password : "********"}
-                </span>
-              )}
-              <button
-                onClick={() => setPasswordVisible(!passwordVisible)}
-                className="p-2 text-dark-text mr-2"
-              >
-                {passwordVisible ? <Eye size={18} /> : <EyeOff size={18} />}
-              </button>
-              <button
-                onClick={() => toggleEdit("password")}
-                className="p-2 text-dark-text"
-              >
-                <Edit2 size={18} />
-              </button>
-            </div>
-          </div>
-        </div>
+        <UserInformationModal userData={safeUserData} onSubmit={handleEdit} />
 
         {/* Stats */}
         <div className="bg-secondary p-8 rounded-lg shadow-lg w-full max-w-md mb-8">
@@ -180,13 +61,13 @@ function Profile() {
           <div className="grid grid-cols-2 gap-8 text-center">
             <div>
               <p className="text-3xl font-bold text-dark-text">
-                {userData.totalHours}
+                {safeUserData.totalHours}
               </p>
               <p className="text-sm text-gray-text">Total Hours</p>
             </div>
             <div>
               <p className="text-3xl font-bold text-dark-text">
-                {userData.totalEvents}
+                {safeUserData.totalEvents}
               </p>
               <p className="text-sm text-gray-text">Events Attended</p>
             </div>

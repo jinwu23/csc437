@@ -1,12 +1,12 @@
-import { EventType, EventFunctionType } from "../types";
+import { EventData, EventFunctionType } from "../types/types";
 
 type EventModalProps = {
-  event: EventType;
-  setSelectedEvent: (event: EventType | null) => void;
+  event: EventData;
+  setSelectedEvent: (event: EventData | null) => void;
   eventFunction: EventFunctionType;
   setEventFunction: (func: EventFunctionType) => void;
-  userEvents: Array<EventType>;
-  setUserEvents: (events: Array<EventType>) => void;
+  userEvents: Array<EventData>;
+  setUserEvents: (events: Array<EventData>) => void;
 };
 
 function EventModal({
@@ -61,10 +61,10 @@ function EventModal({
             {event.title}
           </h2>
           <h3 className="text-2xl font-medium mb-2 text-dark-text">Date</h3>
-          <p className="text-dark-text">{event.date}</p>
+          <p className="text-dark-text">{event.date.getDate()}</p>
 
           <h3 className="text-2xl font-medium mb-2 text-dark-text">Location</h3>
-          <p className="text-dark-text">{event.location}</p>
+          <p className="text-dark-text">{event.location.city}</p>
 
           <h3 className="text-2xl font-medium mb-2 text-dark-text">
             Description

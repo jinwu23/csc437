@@ -1,13 +1,18 @@
-import { EventType, EventFunctionType } from "../types";
+import { EventData, EventFunctionType } from "../types/types";
 
 type EventProps = {
-  event: EventType;
-  setSelectedEvent: (event: EventType) => void;
+  event: EventData;
+  setSelectedEvent: (event: EventData) => void;
   eventFunction: EventFunctionType;
   setEventFunction: (func: EventFunctionType) => void;
-}
+};
 
-function Event({ event, setSelectedEvent, eventFunction, setEventFunction }: EventProps) {
+function Event({
+  event,
+  setSelectedEvent,
+  eventFunction,
+  setEventFunction,
+}: EventProps) {
   const handleEventClick = () => {
     setEventFunction(eventFunction);
     setSelectedEvent(event);
@@ -22,9 +27,9 @@ function Event({ event, setSelectedEvent, eventFunction, setEventFunction }: Eve
         <h2 className="font-medium text-2xl text-dark-text text-center">
           {event.title}
         </h2>
-        <h3 className="text-center text-dark-text">{event.date}</h3>
+        <h3 className="text-center text-dark-text">{event.date.getDate()}</h3>
         <h4 className="font-medium text-lg text-center text-dark-text">
-          {event.location}
+          {event.location.city}
         </h4>
       </div>
     </>

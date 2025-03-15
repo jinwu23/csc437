@@ -1,4 +1,4 @@
-import { EventFunctionType, EventType } from "../types";
+import { EventFunctionType, EventData } from "../types/types";
 
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -6,8 +6,8 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import { useEffect } from "react";
 
 type CalendarProps = {
-  events: EventType[];
-  setSelectedEvent: (event: EventType | null) => void;
+  events: EventData[];
+  setSelectedEvent: (event: EventData | null) => void;
   setEventFunction: (func: EventFunctionType) => void;
 };
 
