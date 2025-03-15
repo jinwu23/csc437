@@ -66,7 +66,7 @@ function Events() {
   const [upcomingEvents, setUpcomingEvents] = useState<Array<EventType>>([]);
   const [selectedEvent, setSelectedEvent] = useState<EventType | null>(null);
   // event function either none, register, cancel
-  const [eventFunction, setEventFunction] = useState <EventFunctionType>("none");
+  const [eventFunction, setEventFunction] = useState<EventFunctionType>("none");
   // Loading state
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -82,7 +82,7 @@ function Events() {
 
   return (
     <>
-      <div className="bg-primary">
+      <div className="bg-primary min-h-screen">
         <div className="flex flex-col items-center lg:flex-row">
           {/* Events List */}
           <div className="lg:ml-8">
@@ -90,7 +90,7 @@ function Events() {
               Upcoming Events
             </h1>
             {/* Loading State */}
-            {loading && <p>Events Loading...</p>}
+            {loading && <p className="text-dark-text">Events Loading...</p>}
 
             <div className="flex flex-col gap-4">
               {userEvents.map((event) => (

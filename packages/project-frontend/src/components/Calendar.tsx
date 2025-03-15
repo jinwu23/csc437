@@ -3,12 +3,13 @@ import { EventFunctionType, EventType } from "../types";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import { useEffect } from "react";
 
 type CalendarProps = {
   events: EventType[];
   setSelectedEvent: (event: EventType | null) => void;
   setEventFunction: (func: EventFunctionType) => void;
-}
+};
 
 export default function Calendar({
   events,
@@ -25,6 +26,27 @@ export default function Calendar({
       originalId: event.id,
     },
   }));
+
+  useEffect(() => {
+    // Apply styles to month text and dates
+    const style = document.createElement("style");
+    style.innerHTML = `
+      .fc .fc-toolbar-title {
+        color: var(--color-dark-text);
+      }
+      .fc .fc-col-header-cell-cushion {
+        color: var(--color-dark-text); 
+      }
+      .fc .fc-daygrid-day-number {
+        color: var(--color-dark-text);
+      }
+    `;
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
 
   const renderEventContent = (eventInfo: any) => {
     return (

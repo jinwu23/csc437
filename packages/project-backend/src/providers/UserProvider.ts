@@ -14,7 +14,7 @@ interface Author {
   email: string;
 }
 
-export class ImageProvider {
+export class UserProvider {
   constructor(private readonly mongoClient: MongoClient) {}
 
   async getAllImages(authorId?: string): Promise<Image[]> {

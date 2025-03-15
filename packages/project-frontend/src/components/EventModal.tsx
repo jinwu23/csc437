@@ -60,13 +60,15 @@ function EventModal({
           <h2 className="text-3xl font-semibold text-dark-text mb-4">
             {event.title}
           </h2>
-          <h3 className="text-2xl font-medium mb-2">Date</h3>
+          <h3 className="text-2xl font-medium mb-2 text-dark-text">Date</h3>
           <p className="text-dark-text">{event.date}</p>
 
-          <h3 className="text-2xl font-medium mb-2">Location</h3>
+          <h3 className="text-2xl font-medium mb-2 text-dark-text">Location</h3>
           <p className="text-dark-text">{event.location}</p>
 
-          <h3 className="text-2xl font-medium mb-2">Description</h3>
+          <h3 className="text-2xl font-medium mb-2 text-dark-text">
+            Description
+          </h3>
           <p className="text-dark-text">{event.description}</p>
 
           {/* Register Button */}

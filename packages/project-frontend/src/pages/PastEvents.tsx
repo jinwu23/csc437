@@ -61,7 +61,7 @@ function PastEvents() {
             Past Events
           </h1>
           {/* Loading State */}
-          {loading && <p>Events Loading...</p>}
+          {loading && <p className="text-dark-text">Events Loading...</p>}
 
           <div className="flex flex-col gap-4 max-w-2xl mb-16">
             {pastEvents.map((event) => (
@@ -70,7 +70,7 @@ function PastEvents() {
                 event={event}
                 setSelectedEvent={setSelectedEvent}
                 eventFunction="none"
-                setEventFunction={() => { }}
+                setEventFunction={() => {}}
               />
             ))}
           </div>
@@ -81,9 +81,9 @@ function PastEvents() {
           event={selectedEvent}
           setSelectedEvent={setSelectedEvent}
           eventFunction="none"
-          setEventFunction={() => { }}
+          setEventFunction={() => {}}
           userEvents={pastEvents}
-          setUserEvents={() => { }}
+          setUserEvents={() => {}}
         />
       )}
     </>

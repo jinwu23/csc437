@@ -6,10 +6,12 @@
   --color-background-dark: #212529;
   --color-light-text: #f8f9fa;
   --color-dark-text: #212529;
+  --color-gray-text: #676e7a;
 }
 
-.dark{
+.dark {
   --color-primary: #434547;
   --color-secondary: #191b1c;
-  --color-dark-text: #c3cbd4;
+  --color-dark-text: #ffffff;
+  --color-gray-text: #c1cad9;
 }
