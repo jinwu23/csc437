@@ -1,4 +1,5 @@
 import { Collection, MongoClient, ObjectId } from "mongodb";
+import { EventProvider, IEventData } from "./EventProvider";
 
 export interface IUserDocument {
   _id?: ObjectId;
@@ -136,6 +137,28 @@ export class UserProvider {
     } catch (error) {
       console.error("Error updating user information:", error);
       throw new Error("Failed to update user information");
+    }
+  }
+
+  // Add this method to your UserProvider class
+  async getUserEventsAttending(
+    _id: ObjectId,
+    eventProvider: EventProvider
+  ): Promise<IEventData[]> {
+    try {
+      const user = await this.collection.findOne(
+        { _id },
+        { projection: { eventsAttending: 1 } }
+      );
+
+      if (!user || !user.eventsAttending || user.eventsAttending.length === 0) {
+        return [];
+      }
+
+      return eventProvider.getEventsByIds(user.eventsAttending);
+    } catch (error) {
+      console.error("Error fetching events attending:", error);
+      throw new Error("Failed to retrieve events attending");
     }
   }
 }
