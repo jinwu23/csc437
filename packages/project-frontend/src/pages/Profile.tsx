@@ -6,6 +6,7 @@ import { sendPostRequest } from "../utils/sendPostRequest";
 type ProfileProps = {
   userData: UserData | null;
   setUserData: React.Dispatch<React.SetStateAction<UserData | null>>;
+  authToken: any;
 };
 
 type EditCredentials = {
@@ -14,26 +15,30 @@ type EditCredentials = {
   email: string;
 };
 
-function Profile({ userData, setUserData }: ProfileProps) {
+function Profile({ userData, setUserData, authToken }: ProfileProps) {
   const safeUserData = userData as UserData;
+  const safeToken = authToken as string;
 
   async function handleEdit({ email, firstName, lastName }: EditCredentials) {
-    let userData = null;
+    const id = safeUserData.id;
 
     try {
       console.log("Editing user data:", email);
-      const response = await sendPostRequest("/auth/user/edit", {
-        email,
-        firstName,
-        lastName,
-      });
+      const response = await sendPostRequest(
+        "/user/edit",
+        {
+          id,
+          email,
+          firstName,
+          lastName,
+        },
+        safeToken
+      );
 
-      if (response.data.user) {
-        userData = response.data.user;
-      }
-
-      if (response.type === "success" && userData) {
-        setUserData(userData);
+      if (response.type === "success") {
+        if (response.data) {
+          setUserData(response.data.data);
+        }
         return;
       } else {
         throw new Error(response.message || "Edit failed. Please try again.");

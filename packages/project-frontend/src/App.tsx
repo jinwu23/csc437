@@ -51,7 +51,11 @@ function App() {
               userData={userData}
               requireAdmin={false}
             >
-              <Profile userData={userData} setUserData={setUserData} />
+              <Profile
+                userData={userData}
+                setUserData={setUserData}
+                authToken={authToken}
+              />
             </ProtectedRoute>
           }
         />

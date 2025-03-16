@@ -56,7 +56,6 @@ function UserInformationModal({
     setError(null);
     try {
       await onSubmit(formData);
-      // Reset editing state after successful submission
       setIsEditing({
         firstName: false,
         lastName: false,

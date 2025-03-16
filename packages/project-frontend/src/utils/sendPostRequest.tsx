@@ -6,17 +6,24 @@ type ApiResponse<T = any> = {
 
 export async function sendPostRequest<T = any>(
   url: string | URL | Request,
-  payload: any
+  payload: any,
+  token?: any
 ): Promise<ApiResponse<T>> {
   try {
     console.log(`Sending POST request to: ${url}`, payload);
 
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+    };
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
     const response = await fetch(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify(payload),
+      credentials: "include",
     });
 
     // Check if the response is valid JSON
