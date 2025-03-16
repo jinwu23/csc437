@@ -112,7 +112,6 @@ export class EventProvider {
   async getAllEvents(): Promise<IEventData[]> {
     try {
       const events = await this.collection.find().toArray();
-
       // Transform to IEventData format
       return events.map((event) => ({
         id: event._id?.toString() || "",

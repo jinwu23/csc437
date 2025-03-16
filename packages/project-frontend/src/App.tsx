@@ -11,6 +11,7 @@ import PastEvents from "./pages/PastEvents";
 import { ProtectedRoute } from "./ProtectedRoute";
 
 import { UserData } from "./types/types";
+import CreateEvent from "./pages/CreateEvent";
 
 function App() {
   const [authToken, setAuthToken] = useState<string | null>(null);
@@ -27,7 +28,11 @@ function App() {
               userData={userData}
               requireAdmin={false}
             >
-              <Events />
+              <Events
+                authToken={authToken}
+                userData={userData}
+                setUserData={setUserData}
+              />
             </ProtectedRoute>
           }
         />
@@ -39,7 +44,11 @@ function App() {
               userData={userData}
               requireAdmin={false}
             >
-              <Events />
+              <Events
+                authToken={authToken}
+                userData={userData}
+                setUserData={setUserData}
+              />
             </ProtectedRoute>
           }
         />
@@ -67,7 +76,11 @@ function App() {
               userData={userData}
               requireAdmin={false}
             >
-              <PastEvents />
+              <PastEvents
+                userData={userData}
+                setUserData={setUserData}
+                authToken={authToken}
+              />
             </ProtectedRoute>
           }
         />
@@ -79,7 +92,7 @@ function App() {
               userData={userData}
               requireAdmin={true}
             >
-              <PastEvents />
+              <CreateEvent />
             </ProtectedRoute>
           }
         />

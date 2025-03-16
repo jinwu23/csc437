@@ -12,9 +12,6 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": "http://localhost:3000", // Forwards all requests at localhost:5173/api/*
-      "/auth": "http://localhost:3000", // Forwards all requests at localhost:5173/auth/*
-      "/user": "http://localhost:3000", // Forwards all requests at localhost:5173/user/*
-      "/event": "http://localhost:3000", // Forwards all requests at localhost:5173/event/*
     },
   },
 });

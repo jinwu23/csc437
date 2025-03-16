@@ -71,7 +71,7 @@ export function registerAuthRoutes(
   const userProvider = new UserProvider(mongoClient);
 
   // Register a new user
-  app.post("/auth/register", async (req: Request, res: Response) => {
+  app.post("/api/auth/register", async (req: Request, res: Response) => {
     // Validate request body
     if (
       !validateRequestBody(req, res, [
@@ -119,7 +119,7 @@ export function registerAuthRoutes(
   });
 
   // Login an existing user
-  app.post("/auth/login", async (req: Request, res: Response) => {
+  app.post("/api/auth/login", async (req: Request, res: Response) => {
     // Validate request body
     if (!validateRequestBody(req, res, ["email", "password"])) {
       return;

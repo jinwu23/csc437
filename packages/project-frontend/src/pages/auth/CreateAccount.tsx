@@ -9,7 +9,7 @@ function CreateAccount() {
     password: string;
   }) => {
     console.log("Creating account:", credentials);
-    const response = await sendPostRequest("/auth/register", credentials);
+    const response = await sendPostRequest("/api/auth/register", credentials);
 
     if (response.type === "success") {
       console.log("Account created successfully!");

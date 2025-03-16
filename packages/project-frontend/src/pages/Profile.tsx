@@ -25,7 +25,7 @@ function Profile({ userData, setUserData, authToken }: ProfileProps) {
     try {
       console.log("Editing user data:", email);
       const response = await sendPostRequest(
-        "/user/edit",
+        "/api/user/edit",
         {
           id,
           email,

@@ -1,74 +1,97 @@
 import { useState, useEffect } from "react";
 
-import { EventFunctionType, EventData } from "../types/types";
+import { EventFunctionType, EventData, UserData } from "../types/types";
 
 import Event from "../components/Event";
 import Calendar from "../components/Calendar";
 import EventModal from "../components/EventModal";
 
-// Mock Event Data
-const upcoming_events = [
-  {
-    id: 1,
-    title: "Beach Cleanup",
-    date: "2025-02-28",
-    location: "Santa Monica",
-    description:
-      "Join us for our monthly beach cleanup! Help preserve our coastal environment by removing trash and plastic waste from the beach. Please bring sunscreen and water. Equipment will be provided.",
-  },
-  {
-    id: 2,
-    title: "Park Tree Planting",
-    date: "2025-03-25",
-    location: "Central Park",
-    description:
-      "Help increase our city's green canopy by planting new trees in Central Park. Learn proper tree planting techniques and contribute to urban sustainability. All tools and saplings will be provided.",
-  },
-  {
-    id: 3,
-    title: "Food Drive",
-    date: "2025-04-01",
-    location: "Community Center",
-    description:
-      "Support our local food bank by participating in our spring food drive. We're collecting non-perishable food items to help families in need. Every donation makes a difference in our community.",
-  },
-];
+type EventProps = {
+  userData: UserData | null;
+  setUserData: React.Dispatch<React.SetStateAction<UserData | null>>;
+  authToken: any;
+};
 
-const user_events = [
-  {
-    id: 4,
-    title: "Community Garden Prep",
-    date: "2025-02-22",
-    location: "Sunset Park",
-    description:
-      "Help us prepare the community garden for spring! We'll be clearing weeds, refreshing soil, and planting early-season crops. No experience necessary—just bring gloves and a willingness to get your hands dirty!",
-  },
-  {
-    id: 5,
-    title: "Homeless Shelter Meal Service",
-    date: "2025-02-24",
-    location: "Downtown Shelter",
-    description:
-      "Join us in preparing and serving warm meals to those in need at the local homeless shelter. Volunteers will assist with cooking, plating, and distributing food. A great way to give back to the community!",
-  },
-  {
-    id: 6,
-    title: "River Cleanup",
-    date: "2025-02-28",
-    location: "Greenway Riverbank",
-    description:
-      "Help keep our waterways clean by removing trash and debris from the Greenway Riverbank. Gloves and trash bags will be provided. Let's work together to protect local wildlife and the environment!",
-  },
-];
-
-function Events() {
+function Events({ userData, setUserData, authToken }: EventProps) {
   const [userEvents, setUserEvents] = useState<Array<EventData>>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<Array<EventData>>([]);
   const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null);
   // event function either none, register, cancel
   const [eventFunction, setEventFunction] = useState<EventFunctionType>("none");
-  // Loading state
   const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    // Fetch the events a user is signed up for
+    const fetchUserEvents = async () => {
+      setLoading(true);
+      try {
+        // Get the user ID from localStorage or wherever you store it
+        const safeUserData = userData as UserData;
+        const userId = safeUserData.id;
+
+        if (!userId) {
+          console.error("User ID not found");
+          setLoading(false);
+          return;
+        }
+
+        // Fetch the user's attending events
+        const response = await fetch(`/api/user/${userId}/events/attending`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+
+        const data = await response.json();
+
+        if (data.type === "success") {
+          // Convert string dates to Date objects
+          const eventsWithDates = data.data.map((event: any) => ({
+            ...event,
+            date: new Date(event.date),
+          }));
+
+          setUserEvents(eventsWithDates);
+        } else {
+          console.error("Failed to fetch user events:", data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching user events:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // fetch Events that are upcoming
+    const fetchUpcomingEvents = async () => {
+      try {
+        const response = await fetch("/api/events", {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+
+        const data = await response.json();
+        console.log(data);
+
+        if (data.type === "success") {
+          const eventsWithDates = data.data.map((event: any) => ({
+            ...event,
+            date: new Date(event.date),
+          }));
+
+          setUpcomingEvents(eventsWithDates);
+        } else {
+          console.error("Failed to fetch events:", data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+
+    fetchUserEvents();
+    fetchUpcomingEvents();
+  }, []);
 
   return (
     <>
@@ -84,6 +107,13 @@ function Events() {
               </h1>
               {/* Loading State */}
               {loading && <p className="text-dark-text">Events Loading...</p>}
+
+              {/* No Upcoming events */}
+              {userEvents.length === 0 && (
+                <div className="flex justify-center">
+                  <p className="text-dark-text ">No upcoming events</p>
+                </div>
+              )}
 
               <div className="flex flex-col gap-4">
                 {userEvents.map((event) => (

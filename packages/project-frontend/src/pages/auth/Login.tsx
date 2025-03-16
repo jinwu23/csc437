@@ -22,7 +22,7 @@ function Login({ setAuthToken, setUserData }: LoginProps) {
 
     try {
       console.log("Logging in user:", email);
-      const response = await sendPostRequest("/auth/login", {
+      const response = await sendPostRequest("/api/auth/login", {
         email,
         password,
       });
