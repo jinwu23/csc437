@@ -61,7 +61,7 @@ function EventModal({
             {event.title}
           </h2>
           <h3 className="text-2xl font-medium mb-2 text-dark-text">Date</h3>
-          <p className="text-dark-text">{event.date.getDate()}</p>
+          <p className="text-dark-text">{event.date.toDateString()}</p>
 
           <h3 className="text-2xl font-medium mb-2 text-dark-text">Location</h3>
           <p className="text-dark-text">{event.location.city}</p>

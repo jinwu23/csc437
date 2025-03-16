@@ -11,7 +11,6 @@ import PastEvents from "./pages/PastEvents";
 import { ProtectedRoute } from "./ProtectedRoute";
 
 import { UserData } from "./types/types";
-import CreateEvent from "./pages/CreateEvent";
 
 function App() {
   const [authToken, setAuthToken] = useState<string | null>(null);
@@ -81,18 +80,6 @@ function App() {
                 setUserData={setUserData}
                 authToken={authToken}
               />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/create-event"
-          element={
-            <ProtectedRoute
-              authToken={authToken}
-              userData={userData}
-              requireAdmin={true}
-            >
-              <CreateEvent />
             </ProtectedRoute>
           }
         />

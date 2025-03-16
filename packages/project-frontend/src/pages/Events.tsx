@@ -5,6 +5,7 @@ import { EventFunctionType, EventData, UserData } from "../types/types";
 import Event from "../components/Event";
 import Calendar from "../components/Calendar";
 import EventModal from "../components/EventModal";
+import CreateEventModal from "../components/CreateEventModal";
 
 type EventProps = {
   userData: UserData | null;
@@ -19,6 +20,9 @@ function Events({ userData, setUserData, authToken }: EventProps) {
   // event function either none, register, cancel
   const [eventFunction, setEventFunction] = useState<EventFunctionType>("none");
   const [loading, setLoading] = useState<boolean>(true);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
+
+  const isAdmin = userData?.type === "admin";
 
   useEffect(() => {
     // Fetch the events a user is signed up for
@@ -91,7 +95,11 @@ function Events({ userData, setUserData, authToken }: EventProps) {
 
     fetchUserEvents();
     fetchUpcomingEvents();
-  }, []);
+  }, [userData, authToken]);
+
+  const handleEventCreated = (newEvent: EventData) => {
+    setUpcomingEvents((prevEvents) => [...prevEvents, newEvent]);
+  };
 
   return (
     <>
@@ -99,7 +107,16 @@ function Events({ userData, setUserData, authToken }: EventProps) {
         <div className="flex flex-col items-center lg:flex-row">
           <div className="flex flex-col items-center">
             {/* Admin Only Event Creation */}
-            {}
+            {isAdmin && (
+              <div className="mb-4 w-full flex justify-center">
+                <button
+                  onClick={() => setIsCreateModalOpen(true)}
+                  className="mt-8 px-6 py-3 bg-background-dark text-light-text rounded-md hover:bg-opacity-90 flex items-center"
+                >
+                  Create New Event
+                </button>
+              </div>
+            )}
             {/* Events List */}
             <div className="lg:ml-8">
               <h1 className="mt-8 mb-4 text-3xl text-dark-text font-semibold">
@@ -153,6 +170,15 @@ function Events({ userData, setUserData, authToken }: EventProps) {
           setEventFunction={setEventFunction}
           userEvents={userEvents}
           setUserEvents={setUserEvents}
+        />
+      )}
+      {isAdmin && (
+        <CreateEventModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          authToken={authToken}
+          userData={userData}
+          onEventCreated={handleEventCreated}
         />
       )}
     </>

@@ -47,4 +47,107 @@ export function registerEventRoutes(
       });
     }
   });
+
+  // Create event endpoint - POST /api/events
+  app.post(
+    "/api/events",
+    verifyAuthToken,
+    async (req: Request, res: Response) => {
+      try {
+        // Validate required fields
+        const {
+          title,
+          date,
+          location,
+          startTime,
+          endTime,
+          description,
+          createdBy,
+        } = req.body;
+
+        // Get the authenticated user's ID from the request
+        const userId = createdBy;
+        if (!userId) {
+          res.status(401).json({
+            type: "error",
+            message: "Unauthorized: User not authenticated",
+          });
+          return;
+        }
+
+        // Verify user is an admin
+        const userObjectId = new ObjectId(userId);
+        const user = await userProvider.getUserById(userObjectId);
+
+        if (!user || user.type !== "admin") {
+          res.status(403).json({
+            type: "error",
+            message: "Forbidden: Only admins can create events",
+          });
+          return;
+        }
+
+        if (
+          !title ||
+          !date ||
+          !location ||
+          !startTime ||
+          !endTime ||
+          !description
+        ) {
+          res.status(400).json({
+            type: "error",
+            message: "Missing required event fields",
+          });
+          return;
+        }
+
+        // Validate location fields
+        if (!location.country || !location.city || !location.address) {
+          res.status(400).json({
+            type: "error",
+            message: "Missing required location fields",
+          });
+          return;
+        }
+
+        // Create the event
+        const newEvent = await eventProvider.createEvent({
+          title,
+          date: new Date(date),
+          location: {
+            country: location.country,
+            city: location.city,
+            address: location.address,
+          },
+          startTime,
+          endTime,
+          registeredVolunteers: [], // Start with empty array
+          description,
+        });
+
+        if (!newEvent) {
+          res.status(500).json({
+            type: "error",
+            message: "Failed to create event",
+          });
+          return;
+        }
+
+        res.status(201).json({
+          type: "success",
+          message: "Event created successfully",
+          data: newEvent,
+        });
+        return;
+      } catch (error) {
+        console.error("Error creating event:", error);
+        res.status(500).json({
+          type: "error",
+          message: "Internal server error",
+        });
+        return;
+      }
+    }
+  );
 }

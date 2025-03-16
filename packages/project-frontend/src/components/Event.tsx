@@ -27,7 +27,9 @@ function Event({
         <h2 className="font-medium text-2xl text-dark-text text-center">
           {event.title}
         </h2>
-        <h3 className="text-center text-dark-text">{event.date.getDate()}</h3>
+        <h3 className="text-center text-dark-text">
+          {event.date.toDateString()}
+        </h3>
         <h4 className="font-medium text-lg text-center text-dark-text">
           {event.location.city}
         </h4>

@@ -21,7 +21,7 @@ export default function Calendar({
     start: event.date,
     allDay: true,
     extendedProps: {
-      location: event.location,
+      location: event.location.city,
       description: event.description,
       originalId: event.id,
     },
