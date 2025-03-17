@@ -24,6 +24,8 @@ function Events({ userData, setUserData, authToken }: EventProps) {
 
   const isAdmin = userData?.type === "admin";
 
+  const safeUserData = userData as UserData;
+
   useEffect(() => {
     // Fetch the events a user is signed up for
     const fetchUserEvents = async () => {
@@ -170,6 +172,10 @@ function Events({ userData, setUserData, authToken }: EventProps) {
           setEventFunction={setEventFunction}
           userEvents={userEvents}
           setUserEvents={setUserEvents}
+          userData={safeUserData}
+          setUserData={setUserData}
+          authToken={authToken}
+          isAdmin={isAdmin}
         />
       )}
       {isAdmin && (

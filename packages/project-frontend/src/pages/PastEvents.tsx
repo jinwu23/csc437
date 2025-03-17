@@ -15,6 +15,8 @@ function PastEvents({ userData, setUserData, authToken }: PastEventsProps) {
   const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const safeUserData = userData as UserData;
+
   useEffect(() => {
     // Fetch past events
     const fetchPastEvents = async () => {
@@ -137,6 +139,10 @@ function PastEvents({ userData, setUserData, authToken }: PastEventsProps) {
           setEventFunction={() => {}}
           userEvents={pastEvents}
           setUserEvents={setPastEvents}
+          userData={safeUserData}
+          setUserData={setUserData}
+          authToken={authToken}
+          isAdmin={false}
         />
       )}
     </>

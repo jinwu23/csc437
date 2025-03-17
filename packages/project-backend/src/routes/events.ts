@@ -150,4 +150,201 @@ export function registerEventRoutes(
       }
     }
   );
+
+  // Register for event endpoint
+  app.post(
+    "/api/events/:id/register",
+    verifyAuthToken,
+    async (req: Request, res: Response) => {
+      try {
+        const eventId = req.params.id;
+        const { userId } = req.body;
+
+        if (!eventId || !userId) {
+          res.status(400).json({
+            type: "error",
+            message: "Missing event ID or user ID",
+          });
+          return;
+        }
+
+        // Convert string IDs to ObjectId
+        const eventObjectId = new ObjectId(eventId);
+        const userObjectId = new ObjectId(userId);
+
+        // Verify the user exists
+        const user = await userProvider.getUserById(userObjectId);
+        if (!user) {
+          res.status(404).json({
+            type: "error",
+            message: "User not found",
+          });
+          return;
+        }
+
+        // Verify the event exists
+        const event = await eventProvider.getEventById(eventObjectId);
+        if (!event) {
+          res.status(404).json({
+            type: "error",
+            message: "Event not found",
+          });
+          return;
+        }
+
+        // Check if user is already registered
+        if (event.registeredVolunteers.some((id) => id.toString() === userId)) {
+          res.status(400).json({
+            type: "error",
+            message: "User is already registered for this event",
+          });
+          return;
+        }
+
+        // Register the user for the event - this updates the event's registeredVolunteers list
+        const updatedEvent = await eventProvider.registerUserForEvent(
+          eventObjectId,
+          userObjectId
+        );
+
+        if (!updatedEvent) {
+          res.status(500).json({
+            type: "error",
+            message: "Failed to register for event",
+          });
+          return;
+        }
+
+        // Update the user's eventsAttending array
+        const userUpdated = await userProvider.addEventToUser(
+          userObjectId,
+          eventObjectId
+        );
+
+        if (!userUpdated) {
+          // If user update fails, roll back the event update
+          await eventProvider.cancelUserRegistration(
+            eventObjectId,
+            userObjectId
+          );
+
+          res.status(500).json({
+            type: "error",
+            message: "Failed to update user's events",
+          });
+          return;
+        }
+
+        res.status(200).json({
+          type: "success",
+          message: "Successfully registered for event",
+          data: updatedEvent,
+        });
+      } catch (error) {
+        console.error("Error registering for event:", error);
+        res.status(500).json({
+          type: "error",
+          message: "Internal server error",
+        });
+      }
+    }
+  );
+
+  // Cancel registration for event endpoint
+  app.post(
+    "/api/events/:id/unregister",
+    verifyAuthToken,
+    async (req: Request, res: Response) => {
+      try {
+        const eventId = req.params.id;
+        const { userId } = req.body;
+
+        if (!eventId || !userId) {
+          res.status(400).json({
+            type: "error",
+            message: "Missing event ID or user ID",
+          });
+          return;
+        }
+
+        // Convert string IDs to ObjectId
+        const eventObjectId = new ObjectId(eventId);
+        const userObjectId = new ObjectId(userId);
+
+        // Verify the user exists
+        const user = await userProvider.getUserById(userObjectId);
+        if (!user) {
+          res.status(404).json({
+            type: "error",
+            message: "User not found",
+          });
+          return;
+        }
+
+        // Verify the event exists
+        const event = await eventProvider.getEventById(eventObjectId);
+        if (!event) {
+          res.status(404).json({
+            type: "error",
+            message: "Event not found",
+          });
+          return;
+        }
+
+        // Check if user is actually registered
+        if (
+          !event.registeredVolunteers.some((id) => id.toString() === userId)
+        ) {
+          res.status(400).json({
+            type: "error",
+            message: "User is not registered for this event",
+          });
+          return;
+        }
+
+        // Cancel the user's registration - this updates the event's registeredVolunteers list
+        const updatedEvent = await eventProvider.cancelUserRegistration(
+          eventObjectId,
+          userObjectId
+        );
+
+        if (!updatedEvent) {
+          res.status(500).json({
+            type: "error",
+            message: "Failed to cancel event registration",
+          });
+          return;
+        }
+
+        // Remove the event from the user's eventsAttending array
+        const userUpdated = await userProvider.removeEventFromUser(
+          userObjectId,
+          eventObjectId
+        );
+
+        if (!userUpdated) {
+          // If user update fails, roll back the event update
+          await eventProvider.registerUserForEvent(eventObjectId, userObjectId);
+
+          res.status(500).json({
+            type: "error",
+            message: "Failed to update user's events",
+          });
+          return;
+        }
+
+        res.status(200).json({
+          type: "success",
+          message: "Successfully canceled event registration",
+          data: updatedEvent,
+        });
+      } catch (error) {
+        console.error("Error canceling event registration:", error);
+        res.status(500).json({
+          type: "error",
+          message: "Internal server error",
+        });
+      }
+    }
+  );
 }

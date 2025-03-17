@@ -161,4 +161,35 @@ export class UserProvider {
       throw new Error("Failed to retrieve events attending");
     }
   }
+
+  // Register for an event
+  async addEventToUser(userId: ObjectId, eventId: ObjectId): Promise<boolean> {
+    try {
+      const result = await this.collection.updateOne(
+        { _id: userId },
+        { $addToSet: { eventsAttending: eventId } }
+      );
+      return result.acknowledged;
+    } catch (error) {
+      console.error("Error adding event to user:", error);
+      throw new Error("Failed to add event to user");
+    }
+  }
+
+  // Cancel registration from event
+  async removeEventFromUser(
+    userId: ObjectId,
+    eventId: ObjectId
+  ): Promise<boolean> {
+    try {
+      const result = await this.collection.updateOne(
+        { _id: userId },
+        { $pull: { eventsAttending: eventId } }
+      );
+      return result.acknowledged;
+    } catch (error) {
+      console.error("Error removing event from user:", error);
+      throw new Error("Failed to remove event from user");
+    }
+  }
 }
