@@ -4,9 +4,13 @@ import tailwindcss from "@tailwindcss/vite";
 import checker from "vite-plugin-checker";
 
 export default defineConfig({
+  base: "./",
   // config options
   plugins: [react(), tailwindcss(), checker({ typescript: true })],
   resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src"),
+    },
     dedupe: ["react", "react-dom"],
   },
   server: {
