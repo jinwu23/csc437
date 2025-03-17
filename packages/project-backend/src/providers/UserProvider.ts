@@ -192,4 +192,71 @@ export class UserProvider {
       throw new Error("Failed to remove event from user");
     }
   }
+
+  async getUsersByIds(
+    userIds: ObjectId[]
+  ): Promise<{ id: string; firstName: string; lastName: string }[]> {
+    try {
+      const users = await this.collection
+        .find({ _id: { $in: userIds } })
+        .toArray();
+
+      return users.map((user) => ({
+        id: user._id?.toString() || "",
+        firstName: user.firstName,
+        lastName: user.lastName,
+      }));
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      throw new Error("Failed to fetch users");
+    }
+  }
+
+  async updateUserStatsAndEvents(
+    userId: ObjectId,
+    eventId: ObjectId,
+    eventDuration: number
+  ): Promise<IUserData | null> {
+    try {
+      // Update the user document to:
+      // Move the event from eventsAttending to eventsAttended
+      // Increment totalEvents by 1
+      // Add the eventDuration to totalHours
+      const result = await this.collection.findOneAndUpdate(
+        { _id: userId },
+        {
+          $pull: { eventsAttending: eventId },
+          $addToSet: { eventsAttended: eventId },
+          $inc: {
+            totalEvents: 1,
+            totalHours: eventDuration,
+          },
+        },
+        {
+          returnDocument: "after",
+          projection: { password: 0 }, // Exclude password
+        }
+      );
+
+      if (!result) {
+        return null;
+      }
+
+      // Transform to IUserData format
+      return {
+        id: result._id?.toString() || "",
+        type: result.type,
+        email: result.email,
+        firstName: result.firstName,
+        lastName: result.lastName,
+        totalEvents: result.totalEvents,
+        totalHours: result.totalHours,
+        eventsAttended: result.eventsAttended.map((id) => id.toString()),
+        eventsAttending: result.eventsAttending.map((id) => id.toString()),
+      };
+    } catch (error) {
+      console.error("Error updating user stats and events:", error);
+      throw new Error("Failed to update user stats and events");
+    }
+  }
 }

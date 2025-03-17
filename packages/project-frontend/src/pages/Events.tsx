@@ -15,7 +15,7 @@ type EventProps = {
 
 function Events({ userData, setUserData, authToken }: EventProps) {
   const [userEvents, setUserEvents] = useState<Array<EventData>>([]);
-  const [upcomingEvents, setUpcomingEvents] = useState<Array<EventData>>([]);
+  const [events, setEvents] = useState<Array<EventData>>([]);
   const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null);
   // event function either none, register, cancel
   const [eventFunction, setEventFunction] = useState<EventFunctionType>("none");
@@ -86,7 +86,7 @@ function Events({ userData, setUserData, authToken }: EventProps) {
             date: new Date(event.date),
           }));
 
-          setUpcomingEvents(eventsWithDates);
+          setEvents(eventsWithDates);
         } else {
           console.error("Failed to fetch events:", data.message);
         }
@@ -100,7 +100,7 @@ function Events({ userData, setUserData, authToken }: EventProps) {
   }, [userData, authToken]);
 
   const handleEventCreated = (newEvent: EventData) => {
-    setUpcomingEvents((prevEvents) => [...prevEvents, newEvent]);
+    setEvents((prevEvents) => [...prevEvents, newEvent]);
   };
 
   return (
@@ -155,7 +155,7 @@ function Events({ userData, setUserData, authToken }: EventProps) {
             </h1>
             <div className="w-full overflow-y-auto">
               <Calendar
-                events={upcomingEvents}
+                events={events}
                 setSelectedEvent={setSelectedEvent}
                 setEventFunction={setEventFunction}
               />
@@ -176,6 +176,8 @@ function Events({ userData, setUserData, authToken }: EventProps) {
           setUserData={setUserData}
           authToken={authToken}
           isAdmin={isAdmin}
+          events={events}
+          setEvents={setEvents}
         />
       )}
       {isAdmin && (

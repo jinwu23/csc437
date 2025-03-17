@@ -13,6 +13,8 @@ export interface IEventDocument {
   endTime: string;
   registeredVolunteers: Array<ObjectId>;
   description: string;
+  completed?: boolean;
+  completedDate?: Date;
 }
 
 export interface IEventData {
@@ -28,6 +30,8 @@ export interface IEventData {
   endTime: string;
   registeredVolunteers: Array<string>;
   description: string;
+  completed?: boolean;
+  completedDate?: Date;
 }
 
 export class EventProvider {
@@ -67,6 +71,8 @@ export class EventProvider {
           id.toString()
         ),
         description: event.description,
+        completed: event.completed,
+        completedDate: event.completedDate,
       };
     } catch (error) {
       console.error("Error fetching event data:", error);
@@ -102,6 +108,8 @@ export class EventProvider {
           id.toString()
         ),
         description: event.description,
+        completed: event.completed,
+        completedDate: event.completedDate,
       }));
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -128,6 +136,8 @@ export class EventProvider {
           id.toString()
         ),
         description: event.description,
+        completed: event.completed,
+        completedDate: event.completedDate,
       }));
     } catch (error) {
       console.error("Error fetching all events:", error);
@@ -248,10 +258,54 @@ export class EventProvider {
           id.toString()
         ),
         description: newEvent.description,
+        completed: false,
       };
     } catch (error) {
       console.error("Error creating event:", error);
       throw new Error("Failed to create event");
+    }
+  }
+
+  async markEventAsCompleted(eventId: ObjectId): Promise<IEventData | null> {
+    try {
+      // Update the event to mark it as completed
+      const result = await this.collection.findOneAndUpdate(
+        { _id: eventId },
+        {
+          $set: {
+            completed: true,
+            completedDate: new Date(),
+          },
+        },
+        { returnDocument: "after" }
+      );
+
+      if (!result) {
+        return null;
+      }
+
+      // Transform to IEventData format
+      return {
+        id: result._id?.toString() || "",
+        title: result.title,
+        date: result.date,
+        location: {
+          country: result.location.country,
+          city: result.location.city,
+          address: result.location.address,
+        },
+        startTime: result.startTime,
+        endTime: result.endTime,
+        registeredVolunteers: result.registeredVolunteers.map((id) =>
+          id.toString()
+        ),
+        description: result.description,
+        completed: result.completed,
+        completedDate: result.completedDate,
+      };
+    } catch (error) {
+      console.error("Error marking event as completed:", error);
+      throw new Error("Failed to mark event as completed");
     }
   }
 }

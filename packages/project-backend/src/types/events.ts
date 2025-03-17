@@ -15,4 +15,6 @@ export interface EventData {
   endTime: string;
   registeredVolunteers: Array<ObjectId>;
   description: string;
+  completed: boolean;
+  commpletedAt: Date;
 }

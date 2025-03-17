@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { EventData, EventFunctionType, UserData } from "../types/types";
+import EventAttendeesModal from "./EventAttendeesModal";
 
 type EventModalProps = {
   event: EventData;
@@ -12,6 +13,8 @@ type EventModalProps = {
   setUserData: React.Dispatch<React.SetStateAction<UserData | null>>;
   authToken: string;
   isAdmin: boolean;
+  events?: Array<EventData>;
+  setEvents?: React.Dispatch<React.SetStateAction<EventData[]>>;
 };
 
 function EventModal({
@@ -25,9 +28,16 @@ function EventModal({
   setUserData,
   authToken,
   isAdmin,
+  events,
+  setEvents,
 }: EventModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [isAttendeesModalOpen, setIsAttendeesModalOpen] =
+    useState<boolean>(false);
+
+  const eventIsCompleted = event.completed;
+  console.log(event);
 
   const handleClose = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -121,6 +131,7 @@ function EventModal({
         setUserEvents(
           userEvents.filter((userEvent) => userEvent.id !== event.id)
         );
+        setSelectedEvent(data.event);
 
         // Update userData.eventsAttending
         const updatedEventsAttending = userData.eventsAttending
@@ -139,6 +150,60 @@ function EventModal({
       }
     } catch (error) {
       console.error("Error canceling event registration:", error);
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Calculate event duration in hours
+  const calculateEventDuration = (): number => {
+    if (!event.startTime || !event.endTime) return 0;
+
+    const [startHours, startMinutes] = event.startTime.split(":").map(Number);
+    const [endHours, endMinutes] = event.endTime.split(":").map(Number);
+
+    const startTotalMinutes = startHours * 60 + startMinutes;
+    const endTotalMinutes = endHours * 60 + endMinutes;
+
+    // Calculate duration in hours (rounded to 2 decimal places)
+    return parseFloat(((endTotalMinutes - startTotalMinutes) / 60).toFixed(2));
+  };
+
+  const handleMarkAsCompleted = async (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      const response = await fetch(`/api/events/${event.id}/complete`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({ user: userData }),
+      });
+
+      const data = await response.json();
+      console.log(data);
+
+      if (data.type === "success") {
+        const updatedEvent = { ...event, completed: true };
+        const updatedEvents =
+          events?.map((e) => (e.id === event.id ? updatedEvent : e)) || [];
+
+        setEvents && setEvents(updatedEvents);
+
+        setTimeout(() => {
+          handleClose(e);
+        }, 2000);
+      } else {
+        setError(data.message || "Failed to mark event as completed");
+      }
+    } catch (error) {
+      console.error("Error marking event as completed:", error);
       setError("Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -183,7 +248,7 @@ function EventModal({
           )}
 
           {/* Register Button */}
-          {eventFunction === "register" && (
+          {eventFunction === "register" && !eventIsCompleted && (
             <button
               className="bg-background-dark text-light-text px-6 py-3 rounded-md w-full mt-4"
               onClick={handleRegister}
@@ -203,8 +268,36 @@ function EventModal({
               {isSubmitting ? "Processing..." : "Cancel Registration"}
             </button>
           )}
+
+          {/* View Attendees Button (Admin Only) */}
+          {isAdmin && (
+            <button
+              className="bg-blue-500 text-white px-6 py-3 rounded-md w-full mt-4"
+              onClick={() => setIsAttendeesModalOpen(true)}
+            >
+              View Attendees
+            </button>
+          )}
+
+          {/* Mark as Completed Button (Admin Only) */}
+          {isAdmin && !eventIsCompleted && (
+            <button
+              className="bg-green-600 text-white px-6 py-3 rounded-md w-full mt-4"
+              onClick={handleMarkAsCompleted}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Processing..." : "Mark Event as Completed"}
+            </button>
+          )}
         </div>
       </div>
+      {isAttendeesModalOpen && (
+        <EventAttendeesModal
+          eventId={event.id}
+          onClose={() => setIsAttendeesModalOpen(false)}
+          authToken={authToken}
+        />
+      )}
     </div>
   );
 }

@@ -27,6 +27,8 @@ export interface EventData {
   endTime: string;
   registeredVolunteers: Array<ObjectId>;
   description: string;
+  completed: boolean;
+  completedDate: Date;
 }
 
 export type EventFunctionType = "none" | "register" | "cancel";
